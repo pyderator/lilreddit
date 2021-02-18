@@ -27,16 +27,21 @@
     "@nestjs/graphql": "^7.9.9",
     "@nestjs/platform-express": "^7.5.1",
     "@nestjs/typeorm": "^7.1.5",
+    "@svtslv/nestjs-ioredis": "^1.0.2",
+    "@types/ioredis": "^4.19.4",
     "apollo-server-express": "^2.21.0",
     "argon2": "^0.27.1",
     "graphql": "^15.5.0",
     "graphql-tools": "^7.0.3",
+    "ioredis": "^4.22.0",
+    "nodemailer": "^6.4.18",
     "pg": "^8.5.1",
     "ps": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
-    "typeorm": "^0.2.31"
+    "typeorm": "^0.2.31",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.1",

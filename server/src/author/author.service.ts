@@ -11,6 +11,11 @@ export class AuthorService {
   ) {}
 
   async register(data): Promise<Author> {
-    return await this.authorRepository.save({ ...data });
+    const author = await this.authorRepository.save({ ...data });
+    if (author) {
+      // Configure Nodemailer to send mail to the paticular author after being saved
+
+      return author;
+    }
   }
 }

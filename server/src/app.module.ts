@@ -10,6 +10,8 @@ import { AuthorController } from './author/author.controller';
 
 import { AuthorModule } from './author/author.module';
 import { Author } from './author/entities/author.entity';
+import { RedisModule } from '@svtslv/nestjs-ioredis';
+import { RedisConf } from 'config/redis';
 
 @Module({
   imports: [
@@ -21,6 +23,9 @@ import { Author } from './author/entities/author.entity';
     }),
     GraphQLModule.forRootAsync({
       useClass: GraphQLConfigService,
+    }),
+    RedisModule.forRootAsync({
+      useClass: RedisConf,
     }),
     AuthorModule,
   ],

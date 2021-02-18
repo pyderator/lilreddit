@@ -5,10 +5,14 @@ import { RegisterInput } from './types/inputRegister';
 
 // Argon2
 import * as argon2 from 'argon2';
+import { InjectRedis, Redis } from '@svtslv/nestjs-ioredis';
 
 @Resolver((of) => Author)
 export class AuthorResolver {
-  constructor(private authorService: AuthorService) {}
+  constructor(
+    @InjectRedis() private readonly redis: Redis,
+    private authorService: AuthorService,
+  ) {}
 
   // Root Hello World Query
   @Query((_) => String)

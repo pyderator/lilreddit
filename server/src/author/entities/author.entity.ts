@@ -34,6 +34,9 @@ export class Author {
   @Field({ nullable: false })
   email: string;
 
+  @Column({ default: false })
+  isVerified: boolean;
+
   @UpdateDateColumn()
   updatedAt: Date;
 
