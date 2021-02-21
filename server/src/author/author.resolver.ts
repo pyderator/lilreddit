@@ -102,4 +102,24 @@ export class AuthorResolver {
       data: response.user,
     };
   }
+
+  // Me Query
+  @Query((_) => AuthResponse)
+  async me(@Context() { req }: reqContext): Promise<AuthResponse> {
+    const { userId } = req.res.req.session;
+    if (!userId) {
+      return {
+        error: [
+          {
+            field: 'session',
+            message: 'Please Login in',
+          },
+        ],
+      };
+    }
+    const user = await this.authorService.findOne(userId);
+    return {
+      data: user,
+    };
+  }
 }

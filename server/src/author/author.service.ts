@@ -73,4 +73,8 @@ export class AuthorService {
       }
     }
   }
+
+  async findOne(userId: number) {
+    return await this.authorRepository.findOne({ id: userId });
+  }
 }
