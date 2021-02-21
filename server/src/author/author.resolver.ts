@@ -82,6 +82,10 @@ export class AuthorResolver {
     @Args('loginInput') loginInput: LoginInput,
     @Context() { req }: reqContext,
   ): Promise<AuthResponse> {
+    loginInput = {
+      username: filterXSS(loginInput.username),
+      password: filterXSS(loginInput.password),
+    };
     const response = await this.authorService.login({ ...loginInput });
     if (!response.status) {
       return {
