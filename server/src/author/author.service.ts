@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectRedis, Redis } from '@svtslv/nestjs-ioredis';
 import { Repository } from 'typeorm';
-import { Author } from './entities/author.entity';
+import * as argon2 from 'argon2';
+import * as session from 'express-session';
 
+import { Author } from './entities/author.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { sendMail } from './utils/nodemailer';
 
@@ -45,6 +47,30 @@ export class AuthorService {
       await this.authorRepository.save(user);
       await this.redis.del(token);
       return { result: 'You are verified now' };
+    }
+  }
+
+  async login({ username, password }) {
+    const user = await this.authorRepository.findOne({ username: username });
+    if (!user) {
+      return {
+        status: false,
+        field: 'username',
+        message: "User doesn't exist",
+      };
+    } else {
+      if (!(await argon2.verify(user.password, password))) {
+        return {
+          status: false,
+          field: 'password',
+          message: "Password doesn't match",
+        };
+      } else {
+        return {
+          status: true,
+          user,
+        };
+      }
     }
   }
 }

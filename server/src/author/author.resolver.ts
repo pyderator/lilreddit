@@ -1,15 +1,25 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+// Argon2
+import * as argon2 from 'argon2';
+import { Request } from 'express';
+// XSS Filter
+import { filterXSS } from 'xss';
 import { AuthorService } from './author.service';
 import { Author } from './entities/author.entity';
 import registerSchema from './schema/registerSchema';
+import { LoginInput } from './types/inputLogin';
 import { RegisterInput } from './types/inputRegister';
 import AuthResponse from './types/response';
 
-// Argon2
-import * as argon2 from 'argon2';
-// XSS Filter
-import { filterXSS } from 'xss';
-
+export type reqContext = {
+  req: Request;
+};
+// overloading the module for fixing type.
+declare module 'express-session' {
+  export interface SessionData {
+    userId: number;
+  }
+}
 @Resolver((of) => Author)
 export class AuthorResolver {
   constructor(private authorService: AuthorService) {}
@@ -64,5 +74,28 @@ export class AuthorResolver {
         };
       }
     }
+  }
+
+  // Login Mutation
+  @Mutation((_) => AuthResponse)
+  async login(
+    @Args('loginInput') loginInput: LoginInput,
+    @Context() { req }: reqContext,
+  ): Promise<AuthResponse> {
+    const response = await this.authorService.login({ ...loginInput });
+    if (!response.status) {
+      return {
+        error: [
+          {
+            field: response.field,
+            message: response.message,
+          },
+        ],
+      };
+    }
+    req.res.req.session.userId = response.user.id;
+    return {
+      data: response.user,
+    };
   }
 }
