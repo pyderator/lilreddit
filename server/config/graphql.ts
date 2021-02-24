@@ -12,6 +12,10 @@ export class GraphQLConfigService implements GqlOptionsFactory {
       context: (req) => ({
         req,
       }),
+      cors: {
+        origin: 'http://localhost:3000',
+        credentials: true,
+      },
     };
   }
 }
