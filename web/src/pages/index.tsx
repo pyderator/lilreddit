@@ -1,8 +1,9 @@
 import Head from "next/head";
+import Layout from "../components/layout";
 
 export default function Home() {
   return (
-    <div>
+    <Layout>
       <Head>
         <title>Lil Reddit</title>
         <link rel="icon" href="/favicon.ico" />
@@ -13,6 +14,6 @@ export default function Home() {
           Taidwind YIPEEEEE!!!!
         </h1>
       </div>
-    </div>
+    </Layout>
   );
 }
