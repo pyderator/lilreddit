@@ -16,6 +16,7 @@ async function bootstrap() {
   });
   app.use(
     session({
+      name: 'qid',
       store: new redisStore({ client: redisClient }),
       secret: 'thisismysecret',
       resave: false,

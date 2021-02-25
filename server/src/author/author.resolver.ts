@@ -1,7 +1,7 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 // Argon2
 import * as argon2 from 'argon2';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 // XSS Filter
 import { filterXSS } from 'xss';
 import { AuthorService } from './author.service';
@@ -20,6 +20,7 @@ declare module 'express-session' {
     userId: number;
   }
 }
+export type resContext = { res: Response };
 @Resolver((of) => Author)
 export class AuthorResolver {
   constructor(private authorService: AuthorService) {}
@@ -97,10 +98,27 @@ export class AuthorResolver {
         ],
       };
     }
-    req.res.req.session.userId = response.user.id;
+    req.session.userId = response.user.id;
     return {
       data: response.user,
     };
+  }
+  // Logout Mutation
+  @Mutation((_) => Boolean)
+  async logout(
+    @Context() { req, res }: reqContext & resContext,
+  ): Promise<Boolean> {
+    console.log(res);
+    return new Promise((resolve) =>
+      req.res.req.session.destroy((err) => {
+        res.clearCookie('qid');
+        if (err) {
+          resolve(false);
+          return false;
+        }
+        resolve(true);
+      }),
+    );
   }
 
   // Me Query

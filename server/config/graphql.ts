@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { GqlModuleOptions, GqlOptionsFactory } from '@nestjs/graphql';
 
 @Injectable()
@@ -9,8 +9,9 @@ export class GraphQLConfigService implements GqlOptionsFactory {
       autoSchemaFile: true,
       sortSchema: true,
       playground: true,
-      context: (req) => ({
+      context: ({ req, res }) => ({
         req,
+        res,
       }),
       cors: {
         origin: 'http://localhost:3000',
