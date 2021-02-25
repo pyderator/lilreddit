@@ -1,17 +1,13 @@
 import { FieldConfig, Form, Formik, FormikProps, useField } from "formik";
 import React from "react";
 import Layout from "../components/layout";
-import { useRegisterMutation } from "../generated/graphql";
-import RegistrationSchema from "../schema/registerValidation";
+import { useLoginMutation } from "../generated/graphql";
+import LoginSchema from "../schema/loginValidation";
 import convertErrors from "../utils/convertError";
-
-interface registerProps {
-  firstName: string;
-  lastName: string;
-  email: string;
+import { useRouter } from "next/router";
+interface loginProps {
   username: string;
   password: string;
-  confirmPassword: string;
 }
 
 const InputField: React.FC<
@@ -36,54 +32,35 @@ const InputField: React.FC<
 };
 
 const Register = () => {
-  const [, registerUser] = useRegisterMutation();
+  const [, loginUser] = useLoginMutation();
+  const router = useRouter();
   return (
     <Layout>
       <div className="max-w-screen-xl m-auto">
-        <h1 className="text-center py-4 font-bold text-4xl">Register Page</h1>
+        <h1 className="text-center py-4 font-bold text-4xl">Login Page</h1>
         <div className="max-w-xl m-auto">
           <Formik
             initialValues={{
-              firstName: "",
-              lastName: "",
-              email: "",
               username: "",
               password: "",
-              confirmPassword: "",
             }}
-            validationSchema={RegistrationSchema}
+            validationSchema={LoginSchema}
             onSubmit={async (values, { setErrors }) => {
-              const { error, data } = await registerUser({
+              const { error, data } = await loginUser({
                 ...values,
               });
-              setErrors(convertErrors(data.register.error));
+
+              data.login.error
+                ? setErrors(convertErrors(data.login.error))
+                : router.push("/");
             }}
           >
-            {(props: FormikProps<registerProps>) => (
+            {(props: FormikProps<loginProps>) => (
               <Form className="bg-blue-50 shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4">
-                <InputField
-                  name="firstName"
-                  label="First Name"
-                  placeholder="John"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:shadow-outline"
-                />
-                <InputField
-                  name="lastName"
-                  label="Last Name"
-                  placeholder="Doe"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:shadow-outline"
-                />
                 <InputField
                   name="username"
                   label="Username"
                   placeholder="johhdoe"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:shadow-outline"
-                />
-                <InputField
-                  name="email"
-                  label="E-mail"
-                  placeholder="johh@doe.com"
-                  type="email"
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:shadow-outline"
                 />
                 <InputField
@@ -94,13 +71,6 @@ const Register = () => {
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:shadow-outline"
                 />
 
-                <InputField
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type="password"
-                  placeholder="*******"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:shadow-outline"
-                />
                 <button
                   type="submit"
                   className="py-2 px-4 mt-2 bg-blue-500 text-md outline-none rounded-md appearance-none hover:bg-blue-600 text-white font-bold"
